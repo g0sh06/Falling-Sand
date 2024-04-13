@@ -16,21 +16,20 @@ function make2DArray(cols, rows) {
 
 function setup() {
     createCanvas(400, 400);
+    colorMode(HSB, 360, 255, 255)
     cols = width / w; // Define cols
     rows = height / w; // Define rows
-    grid = make2DArray(cols, rows); // Invoke make2DArray after cols and rows are defined
+    grid = make2DArray(cols, rows); // Invoke make2DArray after cols and rows are define
 
+}
 
-    for (let i = 0; i < cols; i++) {
-        for (let j = 0; j < rows; j++) {
-            grid[i][j] = 0;
-        }
-    }
-    grid[10][10] = 1;
+function mouseDragged() {
+    let i = floor(mouseX / w);
+    let j = floor(mouseY / w);
+    grid[i][j] = 1;
 }
 
 function draw() {
-    background(255)
     // if the box is 1 it will be black
     // if the box is 0 it will be white
     for (let i = 0; i < cols; i++) {
@@ -43,20 +42,29 @@ function draw() {
         }
     }
 
-    let newGrid = make2DArray(cols, rows)
-    for(let i = 0; i < cols; i++) {
-        for(let j = 0; j < rows; j++) {
-           let currentSand = grid[i][j]
-           if(currentSand > 0){
-             let belowSand = grid[i][j + 1]
-             if(belowSand === 0){
-                newGrid[i][j] = 0
-                newGrid[i][j + 1] = 1
-             }
-           }
-           
-        }
 
+
+    let newGrid = make2DArray(cols, rows)
+    for (let i = 0; i < cols; i++) {
+        for (let j = 0; j < rows; j++) {
+            let currentSand = grid[i][j]
+            if (currentSand > 0) {
+                let belowSand = grid[i][j + 1]
+                if (belowSand === 0 && j < rows - 1) {
+                    newGrid[i][j] = 0
+                    newGrid[i][j + 1] = 1
+                } else {
+                    let direction = Math.random() < 0.5 ? -1 : 1
+                    if (i + direction >= 0 && i + direction < cols && grid[i + direction][j + 1] === 0) {
+                        newGrid[i][j] = 0;
+                        newGrid[i + direction][j + 1] = 1;
+                    } else {
+                        newGrid[i][j] = 1
+                    }
+                }
+            }
+
+        }
     }
     grid = newGrid
 }
